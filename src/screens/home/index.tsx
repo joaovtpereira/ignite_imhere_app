@@ -7,14 +7,23 @@ import {
 } from "react-native";
 import { styles } from "./styles";
 import { Participant } from "../../components/Participant";
+import { useState } from "react";
 
 export function Home() {
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [newParticipantName, setNewParticipantName] = useState("");
+
   function handleParticipantAdd() {
-    console.log("voce clicou em add");
+    setParticipants((prevState) => [...prevState, newParticipantName]);
+    setNewParticipantName("");
   }
 
   function handleParticipantRemove(name: string) {
-    console.log({ name });
+    if (participants.includes(name)) {
+      setParticipants((prevState) =>
+        prevState.filter((participant) => participant !== name)
+      );
+    }
   }
 
   return (
@@ -25,8 +34,10 @@ export function Home() {
       <View style={styles.form}>
         <TextInput
           style={styles.input}
+          value={newParticipantName}
           placeholder="Nome do participante"
           placeholderTextColor={"#6B6B6B"}
+          onChangeText={setNewParticipantName}
         />
         <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
           <Text style={styles.buttonText}>+</Text>
@@ -34,7 +45,7 @@ export function Home() {
       </View>
 
       <FlatList
-        data={["Joao Vitor", "Myllena"]}
+        data={participants}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <Participant
